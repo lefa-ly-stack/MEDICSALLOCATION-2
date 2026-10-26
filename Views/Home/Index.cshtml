@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="home-entrance" aria-labelledby="home-title">
+    <video class="home-background-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
+        <source src="@Url.Content("~/videos/medicsallocation-background.mp4")" type="video/mp4" />
+    </video>
+    <div class="home-video-overlay" aria-hidden="true"></div>
+    <div class="home-orbit home-orbit-one" aria-hidden="true"></div>
+    <div class="home-orbit home-orbit-two" aria-hidden="true"></div>
+
+    <div class="home-copy">
+        <p class="home-eyebrow"><span class="home-eyebrow-dot"></span> MEDICINE ACCESS, CONNECTED</p>
+        <h1 id="home-title">The right medicine.<br /><span>Right where it’s needed.</span></h1>
+        <p class="home-intro">MedicsAllocation brings patients and pharmacy teams together to make medicine availability easier to find and manage.</p>
+
+        <div class="home-actions">
+            @if (User.IsInRole("Admin") || User.IsInRole("PharmacyStaff"))
+            {
+                <a class="btn btn-primary btn-lg" asp-controller="Dashboard" asp-action="Index">Open pharmacy dashboard <span aria-hidden="true">→</span></a>
+            }
+            else if (User.IsInRole("Patient"))
+            {
+                <a class="btn btn-primary btn-lg" asp-controller="Medicines" asp-action="Search">Find medicine <span aria-hidden="true">→</span></a>
+            }
+            else
+            {
+                <a class="btn btn-primary btn-lg" asp-controller="Account" asp-action="Login">Sign in <span aria-hidden="true">→</span></a>
+                <a class="btn btn-outline-primary btn-lg" asp-controller="Account" asp-action="Register">Create patient account</a>
+            }
+        </div>
+
+    </div>
+
+</section>

@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="cobalt">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MEDICSALLOCATION_2</title>
+    <script type="importmap"></script>
+    <script>
+        const savedTheme = localStorage.getItem("medicsallocation-theme");
+        if (["cobalt", "lavender", "taupe", "purple-pink", "gold-charcoal"].includes(savedTheme)) {
+            document.documentElement.dataset.theme = savedTheme;
+        }
+    </script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MEDICSALLOCATION_2.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm site-navbar border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand brand-logo-link" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/medicsallocation-logo.jpg" alt="MedicsAllocation" class="brand-logo" />
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @if (User.IsInRole("Admin") || User.IsInRole("PharmacyStaff"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Inventory" asp-action="Index">Inventory</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Alerts" asp-action="Index">Alerts</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Redistribution" asp-action="Index">Redistribution</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Patient"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Medicines" asp-action="Search">Find medicine</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="CreatePharmacist">Add Pharmacist</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ManagePharmacists">Manage Pharmacists</a>
+                            </li>
+                        }
+                    </ul>
+                    <div class="d-flex align-items-center me-sm-3 my-2 my-sm-0">
+                        <label for="themePicker" class="form-label small mb-0 me-2">Theme</label>
+                        <select id="themePicker" class="form-select form-select-sm theme-picker" aria-label="Choose color theme">
+                            <option value="cobalt">Cobalt dark</option>
+                            <option value="lavender">Lavender light</option>
+                            <option value="taupe">Taupe dark</option>
+                            <option value="purple-pink">Purple and pink</option>
+                            <option value="gold-charcoal">Gold and charcoal</option>
+                        </select>
+                    </div>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - MEDICSALLOCATION_2 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,49 @@
+@model MEDICSALLOCATION_2.Models.InventoryMovementInput
+@using MEDICSALLOCATION_2.Models
+@{
+    ViewData["Title"] = "Record stock movement";
+    var item = ViewBag.InventoryItem as InventoryItem;
+}
+
+<h2>Record stock movement</h2>
+
+@if (item is not null)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <strong>@item.Medicine.Name</strong> at @item.Facility.Name<br />
+            Current quantity: <strong>@item.QuantityOnHand</strong>
+        </div>
+    </div>
+}
+
+<form asp-action="RecordMovement" asp-route-id="@(item?.Id)" method="post" class="row g-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="col-md-4">
+        <label asp-for="Type" class="form-label">Movement</label>
+        <select asp-for="Type" asp-items="ViewBag.MovementTypes" class="form-select"></select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Quantity" class="form-label">Quantity</label>
+        <input asp-for="Quantity" class="form-control" type="number" min="1" />
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-8">
+        <label asp-for="Reason" class="form-label">Notes (optional)</label>
+        <input asp-for="Reason" class="form-control" maxlength="250" />
+        <span asp-validation-for="Reason" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Save movement and update inventory</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

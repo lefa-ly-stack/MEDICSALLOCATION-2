@@ -1,0 +1,53 @@
+@model RegisterAccountViewModel
+@{
+    ViewData["Title"] = "Create pharmacist account";
+}
+
+<section class="auth-page-shell" aria-labelledby="create-pharmacist-title">
+    <video class="auth-background-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
+        <source src="@Url.Content("~/videos/medicsallocation-background.mp4")" type="video/mp4" />
+    </video>
+    <div class="auth-video-overlay" aria-hidden="true"></div>
+    <div class="auth-content-card">
+        <h1 id="create-pharmacist-title" class="h3 mb-3">Create a pharmacist account</h1>
+        @if (TempData["Success"] is string success)
+        {
+            <div class="alert alert-success">@success</div>
+        }
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <form asp-action="CreatePharmacist" method="post">
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label"></label>
+                <input asp-for="FullName" class="form-control" autocomplete="name" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" autocomplete="email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="FacilityId" class="form-label"></label>
+                <select asp-for="FacilityId" asp-items="ViewBag.Facilities" class="form-select">
+                    <option value="">Choose a facility</option>
+                </select>
+                <span asp-validation-for="FacilityId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Create pharmacist account</button>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

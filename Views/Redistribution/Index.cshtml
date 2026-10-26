@@ -1,0 +1,76 @@
+@model IEnumerable<MEDICSALLOCATION_2.Models.RedistributionRecommendation>
+@using MEDICSALLOCATION_2.Models
+@{
+    ViewData["Title"] = "Redistribution suggestions";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h2 mb-1">Redistribution suggestions</h1>
+        <p class="text-muted mb-0">Suggestions move surplus medicine toward facilities reporting low stock.</p>
+    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <form asp-action="Generate" method="post">
+            <button class="btn btn-primary">Generate suggestions</button>
+        </form>
+    }
+</div>
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-warning">@error</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">There are no redistribution suggestions to show yet.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr><th>Medicine</th><th>From</th><th>To</th><th>Quantity</th><th>Reason</th><th>Status</th>@if (User.IsInRole("Admin")){<th>Update</th>}</tr>
+            </thead>
+            <tbody>
+            @foreach (var recommendation in Model)
+            {
+                <tr>
+                    <td>@recommendation.Medicine.Name</td>
+                    <td>@recommendation.FromFacility.Name</td>
+                    <td>@recommendation.ToFacility.Name</td>
+                    <td>@recommendation.Quantity</td>
+                    <td>@recommendation.Reason</td>
+                    <td><span class="badge bg-secondary">@recommendation.Status</span></td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>
+                            @if (recommendation.Status == RedistributionStatus.Pending || recommendation.Status == RedistributionStatus.Accepted)
+                            {
+                                <form asp-action="SetStatus" method="post" class="d-flex gap-2">
+                                    <input type="hidden" name="id" value="@recommendation.Id" />
+                                    <select name="status" class="form-select form-select-sm" aria-label="New recommendation status">
+                                        @if (recommendation.Status == RedistributionStatus.Pending)
+                                        {
+                                            <option value="Accepted">Accept</option>
+                                            <option value="Rejected">Reject</option>
+                                            <option value="Cancelled">Cancel</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Completed">Complete transfer</option>
+                                            <option value="Cancelled">Cancel</option>
+                                        }
+                                    </select>
+                                    <button class="btn btn-sm btn-outline-primary">Save</button>
+                                </form>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,70 @@
+﻿@model IEnumerable<MEDICSALLOCATION_2.Models.InventoryItem>
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Inventory</h2>
+    <a class="btn btn-primary" asp-action="Create">+ Add stock record</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input name="q" value="@ViewBag.Query" class="form-control" placeholder="Search medicine…" />
+    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="col-md-5">@Html.DropDownList("facilityId", ViewBag.Facilities as SelectList, "All facilities", new { @class = "form-select" })</div>
+    }
+    <div class="col-md-2 d-grid"><button class="btn btn-outline-primary">Filter</button></div>
+</form>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Medicine</th>
+            <th>Facility</th>
+            <th>Qty</th>
+            <th>Reorder</th>
+            <th>Expiry</th>
+            <th>Batch</th>
+            <th>Updated</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model)
+        {
+            var imagePath = MEDICSALLOCATION_2.Models.MedicineImageCatalog.GetPath(i.Medicine.Name);
+            var badge = i.QuantityOnHand == 0 ? "danger"
+                      : i.QuantityOnHand <= i.ReorderLevel ? "warning text-dark"
+                      : i.QuantityOnHand > i.MaxStockLevel ? "info text-dark" : "success";
+            <tr>
+                <td>
+                    <div class="medicine-result-cell">
+                        @if (imagePath is not null)
+                        {
+                            <img class="medicine-product-image" src="@imagePath" alt="@i.Medicine.Name package" loading="lazy" decoding="async" />
+                        }
+                        else
+                        {
+                            <div class="medicine-image-placeholder" aria-hidden="true">Rx</div>
+                        }
+                        <div><strong>@i.Medicine.Name</strong><br /><small class="text-muted">@i.Medicine.Category</small></div>
+                    </div>
+                </td>
+                <td>@i.Facility.Name</td>
+                <td><span class="badge bg-@badge">@i.QuantityOnHand</span></td>
+                <td>@i.ReorderLevel</td>
+                <td>@(i.ExpiryDate?.ToString("yyyy-MM-dd") ?? "—")</td>
+                <td>@i.BatchNumber</td>
+                <td>@i.LastUpdated.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@i.Id">View</a>
+                    <a class="btn btn-sm btn-outline-success" asp-action="RecordMovement" asp-route-id="@i.Id">Record movement</a>
+                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@i.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

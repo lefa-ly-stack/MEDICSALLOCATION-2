@@ -1,0 +1,16 @@
+@model MEDICSALLOCATION_2.Models.InventoryItem
+@{
+    ViewData["Title"] = "Delete stock record";
+}
+
+<h2 class="mb-3">Delete stock record?</h2>
+<div class="alert alert-warning">This removes the stock record for <strong>@Model.Medicine.Name</strong> at <strong>@Model.Facility.Name</strong>.</div>
+<dl class="row">
+    <dt class="col-sm-3">Quantity on hand</dt><dd class="col-sm-9">@Model.QuantityOnHand</dd>
+    <dt class="col-sm-3">Batch</dt><dd class="col-sm-9">@(Model.BatchNumber ?? "—")</dd>
+</dl>
+<form asp-action="Delete" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Delete stock record</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>

@@ -1,0 +1,37 @@
+@model MEDICSALLOCATION_2.Models.InventoryItem
+@{
+    ViewData["Title"] = "Stock details";
+}
+
+<h2 class="mb-3">Stock details</h2>
+<dl class="row">
+    <dt class="col-sm-3">Medicine</dt><dd class="col-sm-9">@Model.Medicine.Name (@Model.Medicine.Strength)</dd>
+    <dt class="col-sm-3">Facility</dt><dd class="col-sm-9">@Model.Facility.Name, @Model.Facility.District</dd>
+    <dt class="col-sm-3">Quantity on hand</dt><dd class="col-sm-9">@Model.QuantityOnHand</dd>
+    <dt class="col-sm-3">Reorder level</dt><dd class="col-sm-9">@Model.ReorderLevel</dd>
+    <dt class="col-sm-3">Maximum stock</dt><dd class="col-sm-9">@Model.MaxStockLevel</dd>
+    <dt class="col-sm-3">Batch</dt><dd class="col-sm-9">@(Model.BatchNumber ?? "—")</dd>
+    <dt class="col-sm-3">Expiry</dt><dd class="col-sm-9">@(Model.ExpiryDate?.ToString("yyyy-MM-dd") ?? "—")</dd>
+    <dt class="col-sm-3">Last updated</dt><dd class="col-sm-9">@Model.LastUpdated.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</dd>
+</dl>
+
+<h3 class="h5 mt-4">Stock history</h3>
+@if (!Model.Transactions.Any())
+{
+    <p class="text-muted">No stock movements recorded yet.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead><tr><th>Date</th><th>Movement</th><th>Quantity change</th><th>Notes</th></tr></thead>
+            <tbody>
+            @foreach (var movement in Model.Transactions.OrderByDescending(t => t.Timestamp))
+            {
+                <tr><td>@movement.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td><td>@movement.Type</td><td>@movement.QuantityChange</td><td>@movement.Reason</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+<a class="btn btn-outline-secondary" asp-action="Index">Back to inventory</a>

@@ -1,0 +1,44 @@
+﻿@model MEDICSALLOCATION_2.Models.InventoryItem
+@{
+    ViewData["Title"] = "Edit stock";
+}
+
+<h2>Edit stock record</h2>
+
+<form asp-action="Edit" method="post" class="row g-3">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="col-md-6"><label class="form-label">Facility</label><input class="form-control" value="@Model.Facility.Name" readonly /></div>
+    <div class="col-md-6"><label class="form-label">Medicine</label><input class="form-control" value="@Model.Medicine.Name (@Model.Medicine.Strength)" readonly /></div>
+
+    <div class="col-md-3">
+        <label class="form-label">Quantity on hand</label>
+        <input asp-for="QuantityOnHand" class="form-control" type="number" min="0" />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Reorder level</label>
+        <input asp-for="ReorderLevel" class="form-control" type="number" min="0" />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Max stock level</label>
+        <input asp-for="MaxStockLevel" class="form-control" type="number" min="0" />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Batch number</label>
+        <input asp-for="BatchNumber" class="form-control" />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Expiry date</label>
+        <input asp-for="ExpiryDate" class="form-control" type="date"
+               value="@(Model.ExpiryDate?.ToString("yyyy-MM-dd"))" />
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary">Save</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+    </div>
+</form>

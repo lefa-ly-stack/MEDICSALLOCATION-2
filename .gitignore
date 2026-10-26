@@ -1,0 +1,10 @@
+.vs/
+**/bin/
+**/obj/
+**/publish/
+**/publish-ready/
+**/Properties/PublishProfiles/
+*.csproj.user
+*.pubxml
+*.pubxml.user
+*.zip

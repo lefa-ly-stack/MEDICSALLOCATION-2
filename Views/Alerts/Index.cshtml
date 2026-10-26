@@ -1,0 +1,36 @@
+﻿@model IEnumerable<MEDICSALLOCATION_2.Models.StockAlert>
+@{ ViewData["Title"] = "Alerts"; }
+
+<h2 class="mb-3">Active Alerts</h2>
+
+@if (!Model.Any())
+{
+  <div class="alert alert-success">No active alerts. 🎉</div>
+}
+else
+{
+  <table class="table">
+    <thead><tr><th>Severity</th><th>Type</th><th>Medicine</th><th>Facility</th><th>Message</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var a in Model)
+    {
+      var cls = a.Severity switch {
+        MEDICSALLOCATION_2.Models.AlertSeverity.Critical => "danger",
+        MEDICSALLOCATION_2.Models.AlertSeverity.Warning  => "warning text-dark",
+        _ => "info text-dark" };
+      <tr>
+        <td><span class="badge bg-@cls">@a.Severity</span></td>
+        <td>@a.Type</td>
+        <td>@a.Medicine.Name</td>
+        <td>@a.Facility.Name</td>
+        <td>@a.Message</td>
+        <td>
+          <form method="post" asp-action="Resolve" asp-route-id="@a.Id">
+            <button class="btn btn-sm btn-outline-secondary">Resolve</button>
+          </form>
+        </td>
+      </tr>
+    }
+    </tbody>
+  </table>
+}

@@ -1,0 +1,86 @@
+﻿@model IEnumerable<MEDICSALLOCATION_2.Models.InventoryItem>
+@{ ViewData["Title"] = "Find medicine"; }
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-2">
+  <div>
+    <h1 class="h2 mb-1">Find medicine</h1>
+    <p class="text-muted mb-0">Read-only availability from participating facilities.</p>
+  </div>
+  <span class="badge rounded-pill text-bg-secondary">Patient view</span>
+</div>
+
+<div class="alert alert-info mt-3 mb-4" role="note">
+  Availability can change. Please contact the facility before travelling to confirm the medicine is still available.
+</div>
+
+<form method="get" class="row g-2 mb-4">
+  <div class="col-md-6">
+    <input name="q" value="@ViewBag.Query" class="form-control" placeholder="Search by name (e.g. Paracetamol)" />
+  </div>
+  <div class="col-md-4">
+    <select name="district" class="form-select">
+      <option value="">All districts</option>
+      @foreach (var d in (List<string>)ViewBag.Districts)
+      {
+        <option value="@d" selected="@(d == (string?)ViewBag.District)">@d</option>
+      }
+    </select>
+  </div>
+  <div class="col-md-2 d-grid">
+    <button class="btn btn-primary">Search</button>
+  </div>
+</form>
+
+@if (!Model.Any())
+{
+  <div class="alert alert-warning">No matching medicine records were found. Try another medicine name or district.</div>
+}
+else
+{
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+      <thead>
+        <tr><th>Medicine</th><th>Facility</th><th>District</th><th>Status</th><th>Last updated</th><th>Contact</th></tr>
+      </thead>
+      <tbody>
+        @foreach (var i in Model)
+        {
+          var imagePath = MEDICSALLOCATION_2.Models.MedicineImageCatalog.GetPath(i.Medicine.Name);
+          var badge = i.QuantityOnHand == 0 ? "danger"
+                     : i.QuantityOnHand <= i.ReorderLevel ? "warning text-dark" : "success";
+          var label = i.QuantityOnHand == 0 ? "Out of stock"
+                     : i.QuantityOnHand <= i.ReorderLevel ? "Low stock" : "Available";
+          <tr>
+            <td>
+              <div class="medicine-result-cell">
+                @if (imagePath is not null)
+                {
+                  <img class="medicine-product-image" src="@imagePath" alt="@i.Medicine.Name package" loading="lazy" decoding="async" />
+                }
+                else
+                {
+                  <div class="medicine-image-placeholder" aria-hidden="true">Rx</div>
+                }
+                <div><strong>@i.Medicine.Name</strong><br/><small class="text-muted">@i.Medicine.Category</small></div>
+              </div>
+            </td>
+            <td>@i.Facility.Name</td>
+            <td>@i.Facility.District</td>
+            <td><span class="badge bg-@badge">@label</span></td>
+            <td>@i.LastUpdated.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+            <td>
+              @if (!string.IsNullOrWhiteSpace(i.Facility.ContactPhone))
+              {
+                <a href="tel:@i.Facility.ContactPhone">Call facility</a>
+              }
+              else
+              {
+                <span class="text-muted">Not provided</span>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

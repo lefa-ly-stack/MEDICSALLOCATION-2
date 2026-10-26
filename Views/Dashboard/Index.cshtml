@@ -1,0 +1,51 @@
+﻿@{ ViewData["Title"] = "Dashboard"; }
+
+<h2 class="mb-3">Medicine Availability Dashboard</h2>
+@if (ViewBag.FacilityName is string facilityName)
+{
+  <p class="text-muted">Showing stock for @facilityName.</p>
+}
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+  @if (User.IsInRole("Admin"))
+  {
+    <form method="post" asp-action="RunScans">
+      <button class="btn btn-outline-primary">Refresh Alerts &amp; Recommendations</button>
+    </form>
+  }
+  <a class="btn btn-outline-secondary" asp-controller="Redistribution" asp-action="Index">View redistribution suggestions</a>
+  <a class="btn btn-outline-secondary" asp-action="ExportCsv">Export CSV (for Power BI)</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="card border-primary"><div class="card-body">
+    <div class="text-muted small">Medicines</div><div class="fs-3">@ViewBag.TotalMedicines</div></div></div></div>
+  <div class="col-md-3"><div class="card border-info"><div class="card-body">
+    <div class="text-muted small">Active Facilities</div><div class="fs-3">@ViewBag.TotalFacilities</div></div></div></div>
+  <div class="col-md-3"><div class="card border-warning"><div class="card-body">
+    <div class="text-muted small">Low Stock</div><div class="fs-3">@ViewBag.LowStock</div></div></div></div>
+  <div class="col-md-3"><div class="card border-danger"><div class="card-body">
+    <div class="text-muted small">Near-Expiry / Expired</div><div class="fs-3">@ViewBag.NearExpiry</div></div></div></div>
+  <div class="col-md-3"><div class="card border-secondary"><div class="card-body">
+    <div class="text-muted small">Overstock</div><div class="fs-3">@ViewBag.Overstock</div></div></div></div>
+  <div class="col-md-3"><div class="card border-dark"><div class="card-body">
+    <div class="text-muted small">Open Alerts</div><div class="fs-3">@ViewBag.OpenAlerts</div></div></div></div>
+  <div class="col-md-3"><div class="card border-success"><div class="card-body">
+    <div class="text-muted small">Pending Redistributions</div><div class="fs-3">@ViewBag.PendingRecs</div></div></div></div>
+</div>
+
+<h3 class="h5 mt-4">Medicine availability</h3>
+<canvas id="availChart" height="110" aria-label="Chart showing medicine availability" role="img"></canvas>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.AvailabilityLabels));
+  const data   = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.AvailabilityPct));
+  new Chart(document.getElementById('availChart'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: @(ViewBag.IsAdmin ? "'% facilities with stock'" : "'Availability at this facility (%)'"), data, backgroundColor: '#0d6efd' }] },
+    options: { indexAxis: 'y', scales: { x: { max: 100, beginAtZero: true } } }
+  });
+</script>
+}
